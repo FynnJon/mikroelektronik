@@ -1,3 +1,5 @@
+# Erstellen und trainieren des Netzes
+
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
@@ -51,16 +53,3 @@ print("Test accuracy:", score[1])
 
 
 model.save_weights('saved_weights/my_weights')
-
-
-
-def integer_write_array_4d(fname, p_integer_vector_4d, p_input_shape):
-    with open(fname + '.txt', 'w', newline='') as file:
-        for i1 in p_input_shape[0]:
-            for i2 in p_input_shape[1]:
-                for i3 in p_input_shape[2]:
-                    for i4 in p_input_shape[3]:
-                        csv.writer(file, delimiter=' ').writerow(p_integer_vector_4d(i1, i2, i3, i4))
-
-
-#integer_write_array_4d("input", input_n, input_shape)
