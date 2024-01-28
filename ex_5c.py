@@ -47,8 +47,11 @@ weights = np.array(model.get_weights()[0])
 x_example = x_test[0, :, :, 0]
 x_example = np.reshape(x_example, (1, 28, 28, 1))
 y_pred = model.predict_step(x_example)
-
-plt.imshow(y_pred[0, :, :, 31], cmap=plt.get_cmap('gray'))
+a = y_pred[0, :, :, 0]/np.linalg.norm(y_pred[0, :, :, 0])
+print(a)
+print(np.max(a))
+print(np.min(a))
+plt.imshow(y_pred[0, :, :, 0], cmap=plt.get_cmap('gray'))
 plt.show()
 #plt.imshow(y_pred[0, :, :, 1], cmap=plt.get_cmap('gray'))
 #plt.show()
