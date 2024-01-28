@@ -21,8 +21,6 @@ def integer_read_array_4d(fname, p_input_shape):
 
 
 a = integer_read_array_4d("output", (1, 24, 24, 1))
-print(np.mean(a))
-print(np.median(a))
-plt.imshow(a[0, :, :, 0], cmap=plt.get_cmap('gray'))
+plt.imshow(a[0, :, :, 0], cmap=plt.get_cmap('gray'), vmin=-np.max(a[0, :, :, 0]), vmax=np.max(a[0, :, :, 0]))
 plt.show()
 
