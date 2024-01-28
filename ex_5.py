@@ -2,50 +2,56 @@ import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import csv
+import keras
+from keras import layers
 
 
-mnist = tf.keras.datasets.mnist
-(x_train, y_train), (x_test, y_test) = mnist.load_data()
-x_train = x_train / 255.0
-x_test = x_test / 255.0
-#x_train = np.reshape(x_train, (60000, 784))
-#x_test = np.reshape(x_test, (10000, 784))
-#x_test = x_test.batch()
-#example = x_test[0]
-#print(example.shape)
-#plt.imshow(example, cmap=plt.get_cmap('gray'))
-#plt.show()
+# Model / data parameters
+num_classes = 10
+input_shape = (28, 28, 1)
 
-# Random Bild erzeugen 64x64, 50 Batch, 3 Stück
-#input_shape = (1, 10, 10, 1)
-#input_n = np.random.randint(0, 255, input_shape)
-#input_t = tf.constant(input_n)
-#cnn_feature = tf.random.normal(input_shape)*255
-#print(input_n)
-#print(input_t)
+# Load the data and split it between train and test sets
+(x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data()
+
+# Scale images to the [0, 1] range
+x_train = x_train.astype("float32") / 255
+x_test = x_test.astype("float32") / 255
+# Make sure images have shape (28, 28, 1)
+x_train = np.expand_dims(x_train, -1)
+x_test = np.expand_dims(x_test, -1)
+print("x_train shape:", x_train.shape)
+print(x_train.shape[0], "train samples")
+print(x_test.shape[0], "test samples")
 
 
-model = tf.keras.models.Sequential([
-    tf.keras.layers.Conv2D(1, (5, 5), x_train.shape[1:])(x_train)
-])
+# convert class vectors to binary class matrices
+y_train = keras.utils.to_categorical(y_train, num_classes)
+y_test = keras.utils.to_categorical(y_test, num_classes)
 
-# Parameter für das Training festlegen
-model.compile(optimizer='adam',
-              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-              metrics='accuracy')
-# Modell trainieren mit 100 Durchläufen, kein Callback
-history = model.fit(x_train, y_train, epochs=5)
-# Modell testen und Bewertung nach Loss, Accuracy etc
-model.evaluate(x_test, y_test, verbose=2)
-# Übersicht über das Modell, Anzahl Parameter etc
+model = keras.Sequential(
+    [
+        keras.Input(shape=input_shape),
+        layers.Conv2D(32, kernel_size=(5, 5), use_bias=False),
+        layers.Flatten(),
+        layers.Dense(num_classes, activation="softmax"),
+    ]
+)
+
 model.summary()
 
+batch_size = 128
+epochs = 5
+
+model.compile(loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"])
+
+model.fit(x_train, y_train, batch_size=batch_size, epochs=epochs, validation_split=0.1)
+score = model.evaluate(x_test, y_test, verbose=0)
+print("Test loss:", score[0])
+print("Test accuracy:", score[1])
 
 
+model.save_weights('saved_weights/my_weights')
 
-# Conv Layer
-#output = tf.keras.layers.Conv2D(1, (5, 5), input_shape=input_shape[1:])(input_t)
-#print(output.shape)
 
 
 def integer_write_array_4d(fname, p_integer_vector_4d, p_input_shape):
