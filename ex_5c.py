@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import csv
 import keras
 from keras import layers
+from scipy import signal
 
 
 # Model / data parameters
@@ -43,18 +44,18 @@ model.load_weights('saved_weights/my_weights')
 model.summary()
 weights = np.array(model.get_weights()[0])
 
-
 x_example = x_test[0, :, :, 0]
-x_example = np.reshape(x_example, (1, 28, 28, 1))
-y_pred = model.predict_step(x_example)
-plt.imshow(y_pred[0, :, :, 0], cmap=plt.get_cmap('gray'), vmin=-np.max(y_pred[0, :, :, 0]), vmax=np.max(y_pred[0, :, :, 0]))
+#x_example = np.reshape(x_example, (1, 28, 28, 1))
+#y_pred = model.predict_step(x_example)
+#plt.imshow(y_pred[0, :, :, 0], cmap=plt.get_cmap('gray'), vmin=-np.max(y_pred[0, :, :, 0]), vmax=np.max(y_pred[0, :, :, 0]))
+#plt.show()
+
+b = np.flip(weights[:, :, 0, 0])
+print(b)
+c = signal.convolve2d(x_example*255, b*255, mode='valid')
+plt.imshow(c, cmap=plt.get_cmap('gray'))
 plt.show()
-#plt.imshow(y_pred[0, :, :, 1], cmap=plt.get_cmap('gray'))
-#plt.show()
-#plt.imshow(y_pred[0, :, :, 2], cmap=plt.get_cmap('gray'))
-#plt.show()
-#plt.imshow(y_pred[0, :, :, 31], cmap=plt.get_cmap('gray'))
-#plt.show()
+
 
 
 def integer_write_array_4da(fname, p_integer_vector_4d, p_input_shape):

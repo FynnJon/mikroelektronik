@@ -1,8 +1,10 @@
 # Einlesen von txt
+# HIER GUTE
 
 import numpy as np
 import matplotlib.pyplot as plt
 import csv
+from scipy import signal
 
 
 def integer_read_array_4d(fname, p_input_shape):
@@ -20,7 +22,19 @@ def integer_read_array_4d(fname, p_input_shape):
     return p_integer_array_4d
 
 
-a = integer_read_array_4d("output", (1, 24, 24, 1))
-plt.imshow(a[0, :, :, 0], cmap=plt.get_cmap('gray'), vmin=-np.max(a[0, :, :, 0]), vmax=np.max(a[0, :, :, 0]))
+w = integer_read_array_4d("weights", (5, 5, 1, 1))
+i = integer_read_array_4d("input", (1, 28, 28, 1))
+w = w[:, :, 0, 0]
+i = i[0, :, :, 0]
+w = np.flip(w)
+c = signal.convolve2d(i, w, mode='valid')
+plt.imshow(c, cmap=plt.get_cmap('gray'))
 plt.show()
+print(c)
+
+
+a = integer_read_array_4d("output", (1, 24, 24, 1))
+plt.imshow(a[0, :, :, 0], cmap=plt.get_cmap('gray'))
+plt.show()
+print(a)
 
